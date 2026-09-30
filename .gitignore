@@ -1,0 +1,30 @@
+# Data (too large / regenerable from raw PrimeKG)
+data/raw/
+data/processed/
+primekg_kuzu/
+
+# Model weights and adapters (large, regenerable via training)
+*.gguf
+*.safetensors
+medical_qa_adapter*/
+mlx_model*/
+
+# PubMedQA splits and generated instruction files (regenerable)
+PubMedQA_Split/
+*_primekg_instructions.jsonl
+v2_evaluation_results.json
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+
+# Conda / env
+.env
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
