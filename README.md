@@ -19,7 +19,7 @@ KG context is retrieved from [PrimeKG](https://github.com/mims-harvard/PrimeKG) 
 - [x] Retrieval pipeline built (scispaCy entity extraction → Kuzu FTS → cosine-similarity reranking of triples)
 - [x] PubMedQA split 80/10/10 (train/val/test, seed=42), formatted into KG-infused instruction prompts
 - [x] Qwen2.5-3B-Instruct fine-tuned via MLX LoRA (arm 2) — 600 iterations, best val loss at iter 400
-- [ ] Evaluate Qwen checkpoints (iter 400 vs. final) on held-out test set
+- [x] Evaluate Qwen checkpoints (iter 400 vs. final) on held-out test set
 - [ ] Llama-3.1-8B-Instruct fine-tuning (arm 4)
 - [ ] No-KG baselines (arms 1 and 3)
 - [ ] Hallucination metric beyond accuracy (unsupported-claim rate, contradiction rate)
