@@ -11,7 +11,7 @@ mlx_model*/
 
 # PubMedQA splits and generated instruction files (regenerable)
 PubMedQA_Split/
-*_primekg_instructions.jsonl
+#*_primekg_instructions.jsonl
 v2_evaluation_results.json
 
 # Python
