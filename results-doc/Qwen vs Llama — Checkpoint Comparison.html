@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qwen vs Llama — Checkpoint Comparison</title>
+<style>
+  :root {
+    --bg: #ffffff; --text: #1a1a1a; --muted: #6b7280; --card: #f7f7f8;
+    --border: #e5e7eb; --qwen: #7c3aed; --llama: #2563eb;
+    --yes: #2563eb; --no: #dc2626; --maybe: #9ca3af;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #111113; --text: #e8e8ea; --muted: #9ca0ab; --card: #1b1c1f; --border: #2b2d33; }
+  }
+  :root[data-theme="dark"] { --bg: #111113; --text: #e8e8ea; --muted: #9ca0ab; --card: #1b1c1f; --border: #2b2d33; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.5; }
+  .wrap { max-width: 800px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  h2 { font-size: 16px; margin-top: 36px; border-top: 1px solid var(--border); padding-top: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; color: white; margin-right: 6px; }
+  .tag-qwen { background: var(--qwen); }
+  .tag-llama { background: var(--llama); }
+  .barchart { margin: 10px 0; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 13px; }
+  .bar-label { width: 170px; flex-shrink: 0; color: var(--muted); font-size: 12px; }
+  .bar-track { flex: 1; background: var(--border); border-radius: 4px; height: 14px; min-width: 100px; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { width: 40px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; font-size: 12px; }
+  ul { padding-left: 20px; font-size: 14px; }
+  li { margin-bottom: 8px; }
+  .finding { font-weight: 600; }
+  .footer { color: var(--muted); font-size: 12px; margin-top: 36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚖️ Qwen2.5-3B vs Llama-3.1-8B — Checkpoint Comparison</h1>
+  <div class="sub">Both LoRA fine-tuned on identical data: PubMedQA (800 train / 100 val / 100 test) + PrimeKG-injected context. Same iteration schedule (4000 iters / 5 epochs), same checkpoints evaluated (400, 2600, 3400, 4000-final) on the full 100-sample test set.</div>
+
+  <h2>Results — accuracy by checkpoint</h2>
+  <div class="card">
+    <table>
+      <tr><th>Checkpoint</th><th><span class="tag tag-qwen">QWEN</span>Accuracy</th><th><span class="tag tag-llama">LLAMA</span>Accuracy</th></tr>
+      <tr><td>Iter 400</td><td>67.0%</td><td>56.0%</td></tr>
+      <tr><td>Iter 2600</td><td>66.0%</td><td>60.0%</td></tr>
+      <tr><td>Iter 3400</td><td>59.0%</td><td><strong>70.0%</strong></td></tr>
+      <tr><td>Iter 4000 (final)</td><td>66.0%</td><td>58.0%</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--muted);margin-top:8px;">Baseline (always guess YES): 56.0% accuracy — true label mix in test set is 56 YES / 34 NO / 10 MAYBE.</div>
+  </div>
+
+  <h2>Recall by class — NO and MAYBE (the harder classes)</h2>
+  <div class="card barchart">
+    <div style="font-size:12px;font-weight:600;margin-bottom:6px;"><span class="tag tag-qwen">QWEN</span>NO recall by checkpoint</div>
+    <div class="bar-row"><div class="bar-label">Iter 400</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--qwen)"></div></div><div class="bar-val">0.50</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 2600</div><div class="bar-track"><div class="bar-fill" style="width:56%;background:var(--qwen)"></div></div><div class="bar-val">0.56</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 3400</div><div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--qwen)"></div></div><div class="bar-val">0.47</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 4000</div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--qwen)"></div></div><div class="bar-val">0.32</div></div>
+
+    <div style="font-size:12px;font-weight:600;margin:16px 0 6px;"><span class="tag tag-llama">LLAMA</span>NO recall by checkpoint</div>
+    <div class="bar-row"><div class="bar-label">Iter 400</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--llama)"></div></div><div class="bar-val">0.00</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 2600</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--llama)"></div></div><div class="bar-val">0.18</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 3400</div><div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--llama)"></div></div><div class="bar-val">0.53</div></div>
+    <div class="bar-row"><div class="bar-label">Iter 4000</div><div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--llama)"></div></div><div class="bar-val">0.09</div></div>
+
+    <div style="font-size:12px;font-weight:600;margin:16px 0 6px;">MAYBE recall — both models</div>
+    <div class="bar-row"><div class="bar-label"><span class="tag tag-qwen" style="margin-right:4px;">Q</span>Iter 2600</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--qwen)"></div></div><div class="bar-val">0.30</div></div>
+    <div class="bar-row"><div class="bar-label"><span class="tag tag-qwen" style="margin-right:4px;">Q</span>Iter 3400</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--qwen)"></div></div><div class="bar-val">0.40</div></div>
+    <div class="bar-row"><div class="bar-label"><span class="tag tag-llama" style="margin-right:4px;">L</span>All checkpoints</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--llama)"></div></div><div class="bar-val">0.00</div></div>
+  </div>
+
+  <h2>Key findings</h2>
+  <div class="card">
+    <ul>
+      <li><span class="finding">The bigger model is not clearly better.</span> Llama-8B's best checkpoint (iter 3400, 70%) edges out Qwen-3B's best (iter 400, 67%) — but Llama's <em>other three</em> checkpoints (56–60%) are all worse than every Qwen checkpoint (59–67%). Model size alone didn't produce a consistent advantage here.</li>
+      <li><span class="finding">Llama is more YES-biased than Qwen overall.</span> At iterations 400 and 4000, Llama's YES recall is near-perfect (1.00, 0.98) while NO recall collapses to near-zero (0.00, 0.09) — more extreme than Qwen showed at the same checkpoints.</li>
+      <li><span class="finding">Neither model ever learned to predict MAYBE.</span> Llama scored 0.00 MAYBE recall at <em>every single checkpoint</em> tested — worse than Qwen, which reached 0.30–0.40 at iterations 2600 and 3400. This is a real asymmetry between the two models on this data.</li>
+      <li><span class="finding">Llama's one strong checkpoint (iter 3400) lands right where Qwen started overfitting.</span> For Qwen, iter 3400 was already past the healthy plateau and degrading (val loss rising). For Llama, that same iteration was its best test result — the two models' "sweet spots" don't line up at the same training point, which argues against assuming a shared "best iteration" across different models.</li>
+      <li><span class="finding">Validation loss was a weak predictor of test accuracy for both models.</span> Neither model's lowest-val-loss checkpoint (iter 2600 for both) was its best-accuracy checkpoint — reinforcing that val loss alone isn't a reliable way to pick a final checkpoint here.</li>
+    </ul>
+  </div>
+
+  <h2>What this means for the hallucination question</h2>
+  <div class="card">
+    <p style="font-size:14px;margin-top:0;">Neither model shows evidence of genuine, balanced reasoning yet — both lean heavily on a YES-guessing shortcut, and Llama does so more severely despite being the larger, "stronger" model in this study's design. This is itself a useful finding: <strong>bigger does not automatically mean better-grounded</strong> on this task, at least not without addressing the underlying class imbalance in training data first. Before drawing conclusions about KG grounding reducing hallucination, this imbalance issue likely needs to be addressed, since right now accuracy differences mostly reflect which answer each checkpoint defaults to, not genuine fact-grounded reasoning.</p>
+  </div>
+
+  <div class="footer">Qwen2.5-3B-Instruct &amp; Llama-3.1-8B-Instruct (4-bit) · LoRA (rank 8, 8 layers) · PubMedQA (PQA-L) · PrimeKG-grounded context · Evaluated on full 100-sample test split</div>
+</div>
+</body>
+</html>
